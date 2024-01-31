@@ -39,6 +39,7 @@ public:
 		KERNEL_RESULT_ERROR_ILLEGAL_CONTEXT = -100,
 		KERNEL_RESULT_ERROR_ILLEGAL_INTRCODE = -101,
 		KERNEL_RESULT_ERROR_CPUDI = -102,
+		KERNEL_RESULT_ERROR_INTRDISABLE = -103,
 		KERNEL_RESULT_ERROR_FOUND_HANDLER = -104,
 		KERNEL_RESULT_ERROR_NOTFOUND_HANDLER = -105,
 		KERNEL_RESULT_ERROR_NO_TIMER = -150,
@@ -228,7 +229,7 @@ public:
 	int32 DelayThread(uint32);
 	void DelayThreadTicks(uint32);
 	uint32 SetAlarm(uint32, uint32, uint32);
-	uint32 CancelAlarm(uint32, uint32);
+	uint32 CancelAlarm(uint32, uint32, bool);
 	THREAD* GetThread(uint32);
 	int32 GetCurrentThreadId();
 	int32 GetCurrentThreadIdRaw() const;

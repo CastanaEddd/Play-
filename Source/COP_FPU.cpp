@@ -7,16 +7,19 @@
 #include "MemoryUtils.h"
 #include "FpUtils.h"
 
+// clang-format off
 const uint32 CCOP_FPU::m_ccMask[8] =
-    {
-        0x00800000,
-        0x02000000,
-        0x04000000,
-        0x08000000,
-        0x10000000,
-        0x20000000,
-        0x40000000,
-        0x80000000};
+{
+	0x00800000,
+	0x02000000,
+	0x04000000,
+	0x08000000,
+	0x10000000,
+	0x20000000,
+	0x40000000,
+	0x80000000
+};
+// clang-format on
 
 CCOP_FPU::CCOP_FPU(MIPS_REGSIZE regSize)
     : CMIPSCoprocessor(regSize)
@@ -161,7 +164,7 @@ void CCOP_FPU::CTC1()
 	}
 	else
 	{
-		assert(0);
+		Illegal();
 	}
 }
 
@@ -570,7 +573,7 @@ void CCOP_FPU::LWC1()
 
 		m_codeGen->PushCtx();
 		m_codeGen->PushIdx(1);
-		m_codeGen->Call(reinterpret_cast<void*>(&MemoryUtils_GetWordProxy), 2, true);
+		m_codeGen->Call(reinterpret_cast<void*>(&MemoryUtils_GetWordProxy), 2, Jitter::CJitter::RETURN_VALUE_32);
 
 		m_codeGen->PullRel(offsetof(CMIPS, m_State.nCOP1[m_ft]));
 
@@ -610,7 +613,7 @@ void CCOP_FPU::SWC1()
 		m_codeGen->PushCtx();
 		m_codeGen->PushRel(offsetof(CMIPS, m_State.nCOP1[m_ft]));
 		m_codeGen->PushIdx(2);
-		m_codeGen->Call(reinterpret_cast<void*>(&MemoryUtils_SetWordProxy), 3, false);
+		m_codeGen->Call(reinterpret_cast<void*>(&MemoryUtils_SetWordProxy), 3, Jitter::CJitter::RETURN_VALUE_NONE);
 
 		m_codeGen->PullTop();
 	}

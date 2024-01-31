@@ -2,6 +2,7 @@ name: Build Android
 
 on: [push, pull_request]
 env:
+  ANDROID_BUILD_TOOLS_VERSION: '34.0.0'
   ANDROID_NDK_VERSION: '25.2.9519653'
   ANDROID_CMAKE_VERSION: '3.22.1'
 jobs:
@@ -24,7 +25,7 @@ jobs:
     - name: Force Fetch Git Tags
       run: git fetch --tags --force
     - name: Set SHORT_HASH
-      run: echo "::set-output name=VALUE::${LONG_HASH:0:8}"
+      run: echo "VALUE=${LONG_HASH:0:8}" >> $GITHUB_OUTPUT
       id: short_hash
       env:
         LONG_HASH: ${{ github.sha }}
@@ -48,7 +49,7 @@ jobs:
     - name: Prepare Unsigned APKs/AAB for Distribution
       if: ${{ matrix.build-type == 'apk'}}
       run: |
-        export ANDROID_BUILD_TOOLS=$ANDROID_HOME/build-tools/29.0.3
+        export ANDROID_BUILD_TOOLS=$ANDROID_HOME/build-tools/${{ env.ANDROID_BUILD_TOOLS_VERSION }}
         cp build_android/build/outputs/apk/release/Play-release-unsigned.apk .
         cp Play-release-unsigned.apk Play-release.apk
         cp build_android/build/outputs/bundle/release/Play-release.aab .
@@ -56,7 +57,7 @@ jobs:
     - name: Prepare Signed APKs for Distribution
       if: ${{ matrix.build-type == 'apk'  && env.ANDROID_KEYSTORE_PASS != null}}
       run: |
-        export ANDROID_BUILD_TOOLS=$ANDROID_HOME/build-tools/29.0.3
+        export ANDROID_BUILD_TOOLS=$ANDROID_HOME/build-tools/${{ env.ANDROID_BUILD_TOOLS_VERSION }}
         $ANDROID_BUILD_TOOLS/apksigner sign --ks installer_android/deploy.keystore --ks-key-alias deploy --ks-pass env:ANDROID_KEYSTORE_PASS --key-pass env:ANDROID_KEYSTORE_PASS Play-release.apk
         $ANDROID_BUILD_TOOLS/zipalign -c -v 4 Play-release.apk
       env:
